@@ -34,7 +34,7 @@ public class Customer {
     }
 
     public void setCustomerCode(String customerCode) throws Exception {
-        if (!DataValidate.checkStringWithFormat(customerCode, Constants.ID_PATTERN)) {
+        if (!DataValidate.checkStringWithFormat(customerCode, Constants.CUSTOMER_ID_PATTERN)) {
             throw new Exception("Customer code invalid.");
         }
         this.customerCode = customerCode;

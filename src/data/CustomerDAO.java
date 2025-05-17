@@ -9,28 +9,28 @@ import java.util.stream.Collectors;
 
 public class CustomerDAO implements ICustomer {
 
-    private final List<Customer> customersList = new ArrayList<>();
-    private final FileManager fileManager;
+    private final List<Customer> CUSTOMER_LIST = new ArrayList<>();
+    private final FileManager FILE_MANAGER;
 
     public CustomerDAO(String fileName) throws Exception {
-        this.fileManager = new FileManager(fileName);
+        this.FILE_MANAGER = new FileManager(fileName);
         loadData();
     }
 
-    public void loadData() throws Exception {
+    public final void loadData() throws Exception {
         String customerCode, customerName, email, phoneNumber;
         try {
-            customersList.clear();
-            List<String> customersData = fileManager.readDataFromFile();
+            CUSTOMER_LIST.clear();
+            List<String> customersData = FILE_MANAGER.readDataFromFile();
             for (String e : customersData) {
-                List<String> cus = Arrays.asList(e.split(","));
-                customerCode = cus.get(0).trim();
-                customerName = cus.get(1).trim();
-                email = cus.get(2).trim();
-                phoneNumber = cus.get(3).trim();
-                Customer cusO = new Customer(customerCode, customerName, phoneNumber, email);
-                customersList.add(cusO);
-                if (customersList.isEmpty()) {
+                List<String> fieldsOfCustomer = Arrays.asList(e.split(","));
+                customerCode = fieldsOfCustomer.get(0).trim();
+                customerName = fieldsOfCustomer.get(1).trim();
+                email = fieldsOfCustomer.get(2).trim();
+                phoneNumber = fieldsOfCustomer.get(3).trim();
+                Customer customer = new Customer(customerCode, customerName, phoneNumber, email);
+                CUSTOMER_LIST.add(customer);
+                if (CUSTOMER_LIST.isEmpty()) {
                     throw new Exception("Customer list is empty.");
                 }
             }
@@ -41,22 +41,23 @@ public class CustomerDAO implements ICustomer {
 
     @Override
     public List<Customer> getCustomers() throws Exception {
-        customersList.sort((e1, e2) -> e1.getCustomerName().compareToIgnoreCase(e2.getCustomerName()));
-        return customersList;
+        CUSTOMER_LIST.sort((e1, e2) -> e1.getCustomerName().compareToIgnoreCase(e2.getCustomerName()));
+        return CUSTOMER_LIST;
     }
 
     @Override
     public Customer getCustomerById(String id) throws Exception {
-        if (customersList.isEmpty()) {
-            getCustomers();
-        }
-        Customer customer = customersList.stream().filter(e -> e.getCustomerCode().equals(id)).findFirst().orElse(null);
+        Customer customer = CUSTOMER_LIST.stream()
+                .filter(e -> e.getCustomerCode()
+                .equalsIgnoreCase(id))
+                .findFirst()
+                .orElse(null);
         return customer;
     }
 
     @Override
     public void addCustomer(Customer customer) throws Exception {
-        customersList.add(customer);
+        CUSTOMER_LIST.add(customer);
     }
 
     @Override
@@ -71,20 +72,19 @@ public class CustomerDAO implements ICustomer {
 
     @Override
     public void removeCustomer(Customer customer) throws Exception {
-        if (customersList.isEmpty()) {
-            getCustomers();
-        }
         Customer cus = getCustomerById(customer.getCustomerCode());
         if (cus != null) {
-            customersList.remove(cus);
+            CUSTOMER_LIST.remove(cus);
         }
     }
 
     @Override
     public void saveCustomersListToFile() throws Exception {
-        List<String> stringObject = customersList.stream().map(String::valueOf).collect(Collectors.toList());
+        List<String> stringObject = CUSTOMER_LIST.stream()
+                .map(String::valueOf)
+                .collect(Collectors.toList());
         String data = String.join("\n", stringObject);
-        fileManager.saveDataToFile(data);
+        FILE_MANAGER.saveDataToFile(data);
     }
 
 }

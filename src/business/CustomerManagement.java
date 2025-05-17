@@ -32,10 +32,15 @@ public class CustomerManagement {
     public void processMenu() {
         try {
             do {
-                Menu.print("******Customer Management******|1.Add Customer"
-                        + "|2.Update Customer |3.Search Customer By Name"
-                        + "|4.Display Feast Menu |5.Place feast order"
-                        + "|6.Update Order Info |7.Sava Data To File |8.Display Customer or Order Lists"
+                Menu.print("******Customer Management******"
+                        + "|1.Add Customer"
+                        + "|2.Update Customer"
+                        + "|3.Search Customer By Name"
+                        + "|4.Display Feast Menu"
+                        + "|5.Place feast order"
+                        + "|6.Update Order Info"
+                        + "|7.Sava Data To File"
+                        + "|8.Display Customer or Order Lists"
                         + "|9.Exit |Select:");
                 int choice = Menu.getUserChoice();
                 switch (choice) {
@@ -81,7 +86,7 @@ public class CustomerManagement {
                         String confirm = DataInput.getString("Do you want to save changes before exiting? (Y/N): ").toUpperCase();
                         if (confirm.equals("Y")) {
                             System.out.println("Data saved to file successfully");
-                            // saveDataToFile();
+                            //saveDataToFile();
                         }
                         System.exit(0);
                     }
@@ -95,7 +100,7 @@ public class CustomerManagement {
     }
 
     public Customer inputCustomer() throws Exception {
-        String customerCode = DataInput.getString("Enter customer code:", Constants.ID_PATTERN).toUpperCase();
+        String customerCode = DataInput.getString("Enter customer code:", Constants.CUSTOMER_ID_PATTERN).toUpperCase();
         String customerName = DataInput.getString("Enter customer name:", Constants.NAME_PATTERN);
         String phoneNumber = DataInput.getString("Enter phone number:", Constants.PHONE_PATTERN);
         String email = DataInput.getString("Enter email:", Constants.EMAIL_PATTERN);
@@ -155,7 +160,7 @@ public class CustomerManagement {
 
     public void updateCustomer() throws Exception {
         try {
-            String customerCode = DataInput.getString("Enter customer code:", Constants.ID_PATTERN).toUpperCase();
+            String customerCode = DataInput.getString("Enter customer code:", Constants.CUSTOMER_ID_PATTERN).toUpperCase();
             Customer customer = customerDAO.getCustomerById(customerCode);
             if (customer == null) {
                 System.out.println("Customer not found");
@@ -204,12 +209,12 @@ public class CustomerManagement {
     }
 
     public void placeOrder() throws Exception {
-        String customerCode = DataInput.getString("Enter customer code:", Constants.ID_PATTERN).toUpperCase();
+        String customerCode = DataInput.getString("Enter customer code:", Constants.CUSTOMER_ID_PATTERN).toUpperCase();
         Customer customer = customerDAO.getCustomerById(customerCode);
         if (customer == null) {
             throw new Exception("Customer not found");
         }
-        String feastCode = DataInput.getString("Enter feast code:", Constants.feastCodeList).toUpperCase();
+        String feastCode = DataInput.getString("Enter feast code:", Constants.FEAST_CODE_LIST).toUpperCase();
         Feast feast = feastDAO.getFeastById(feastCode);
         if (feast == null) {
             throw new Exception("Feast not found");
@@ -236,7 +241,7 @@ public class CustomerManagement {
             if (order == null) {
                 throw new Exception("Order not found");
             }
-            String feastCode = DataInput.getStringUpdate("Enter feast code:", Constants.feastCodeList).toUpperCase();
+            String feastCode = DataInput.getStringUpdate("Enter feast code:", Constants.FEAST_CODE_LIST).toUpperCase();
             int numberTable = DataInput.getIntegerNumber("Enter number of table:");
             LocalDate date = DataInput.getDateUpdate("Enter event date:");
             if (feastCode == "") {

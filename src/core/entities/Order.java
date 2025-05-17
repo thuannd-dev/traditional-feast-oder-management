@@ -80,7 +80,7 @@ public class Order {
 
     @Override
     public String toString() {
-        String date = this.date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
-        return orderID + ", " + customerCode + ", " + feastCode + ", " + price + ", " + numberTable + ", " + date + ", " + totalPrice;
+        String dateFormat = this.date.format(java.time.format.DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        return orderID + ", " + customerCode + ", " + feastCode + ", " + price + ", " + numberTable + ", " + dateFormat + ", " + totalPrice;
     }
 }

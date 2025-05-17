@@ -31,7 +31,7 @@ public class FeastDAO {
                 ingredients = feastS.get(3).trim();
                 Feast feast = new Feast(feastCode, feastName, price, ingredients);
                 feastsList.add(feast);
-                Constants.feastCodeList.add(feastCode);
+                Constants.FEAST_CODE_LIST.add(feastCode);
                 if (feastsList.isEmpty()) {
                     throw new Exception("Customer list is empty.");
                 }
