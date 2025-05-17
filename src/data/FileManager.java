@@ -19,11 +19,17 @@ public class FileManager {
 
     public List<String> readDataFromFile() throws IOException {
         List<String> result;
-        result = Files.readAllLines(new File(fileName).toPath(), Charset.forName("utf-8"));
+        result = Files.readAllLines(
+                new File(fileName).toPath(),
+                Charset.forName("utf-8")
+        );
         return result;
     }
 
     public void saveDataToFile(String data) throws IOException {
-        Files.writeString(new File(fileName).toPath(), data, Charset.forName("utf-8"));
+        Files.writeString(
+                new File(fileName).toPath(), data,
+                Charset.forName("utf-8")
+        );
     }
 }

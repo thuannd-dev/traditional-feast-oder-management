@@ -21,18 +21,19 @@ public class OrderDAO implements IOrder {
     public final void loadData() throws Exception {
         String orderID, customerCode, feastCode;
         LocalDate date;
-        int price, numberTable;
+        double price;
+        int numberTable;
         try {
             ORDERS_LIST.clear();
             List<String> orderData = FILE_MANAGER.readDataFromFile();
             for (String e : orderData) {
-                List<String> orderS = Arrays.asList(e.split(","));
-                orderID = orderS.get(0).trim();
-                customerCode = orderS.get(1).trim();
-                feastCode = orderS.get(2).trim();
-                price = Integer.parseInt(orderS.get(3).trim());
-                numberTable = Integer.parseInt(orderS.get(4).trim());
-                date = LocalDate.parse(orderS.get(5).trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+                List<String> fieldsOfOrder = Arrays.asList(e.split(","));
+                orderID = fieldsOfOrder.get(0).trim();
+                customerCode = fieldsOfOrder.get(1).trim();
+                feastCode = fieldsOfOrder.get(2).trim();
+                price = Double.parseDouble(fieldsOfOrder.get(3).trim());
+                numberTable = Integer.parseInt(fieldsOfOrder.get(4).trim());
+                date = LocalDate.parse(fieldsOfOrder.get(5).trim(), DateTimeFormatter.ofPattern("dd/MM/yyyy"));
                 Order order = new Order(orderID, customerCode, feastCode, price, numberTable, date);
                 ORDERS_LIST.add(order);
                 if (ORDERS_LIST.isEmpty()) {
@@ -44,22 +45,27 @@ public class OrderDAO implements IOrder {
         }
     }
 
+    @Override
     public List<Order> getOrders() throws Exception {
         return ORDERS_LIST;
     }
 
+    @Override
     public void addOrder(Order order) throws Exception {
         ORDERS_LIST.add(order);
     }
 
+    @Override
     public Order getOrderById(String id) throws Exception {
-        if (ORDERS_LIST.isEmpty()) {
-            getOrders();
-        }
-        Order order = ORDERS_LIST.stream().filter(e -> e.getOrderID().equals(id)).findFirst().orElse(null);
+        Order order = ORDERS_LIST.stream()
+                .filter(e -> e.getOrderID()
+                .equalsIgnoreCase(id))
+                .findFirst()
+                .orElse(null);
         return order;
     }
 
+    @Override
     public void updateOrder(Order order) throws Exception {
         Order orderO = getOrderById(order.getOrderID());
         if (orderO == null) {
@@ -73,16 +79,23 @@ public class OrderDAO implements IOrder {
         orderO.setTotalPrice(order.getTotalPrice());
     }
 
-    public boolean checkDuplication(String customerCode, String feastCode, LocalDate date) throws Exception {
-        if (ORDERS_LIST.isEmpty()) {
-            getOrders();
-        }
-        Order order = ORDERS_LIST.stream().filter(e -> e.getCustomerCode().equalsIgnoreCase(customerCode) && e.getFeastCode().equalsIgnoreCase(feastCode) && e.getDate().equals(date)).findFirst().orElse(null);
+    @Override
+    public boolean isDuplication(String customerCode, String feastCode, LocalDate date) throws Exception {
+        Order order = ORDERS_LIST.stream()
+                .filter(
+                        e -> e.getCustomerCode().equalsIgnoreCase(customerCode)
+                        && e.getFeastCode().equalsIgnoreCase(feastCode)
+                        && e.getDate().equals(date)
+                )
+                .findFirst()
+                .orElse(null);
         return order != null;
     }
 
+    @Override
     public void saveOrdersListToFile() throws Exception {
-        List<String> stringObject = ORDERS_LIST.stream().map(String::valueOf).toList();
+        List<String> stringObject = ORDERS_LIST.stream()
+                .map(String::valueOf).toList();
         String data = String.join("\n", stringObject);
         FILE_MANAGER.saveDataToFile(data);
     }

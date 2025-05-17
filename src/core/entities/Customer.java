@@ -3,7 +3,7 @@ package core.entities;
 import common.env.Constants;
 import common.tools.DataValidate;
 
-public class Customer {
+public final class Customer {
 
     private String customerCode;
     private String customerName;

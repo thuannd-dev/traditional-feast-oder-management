@@ -12,7 +12,7 @@ public interface IOrder {
 
     void addOrder(Order order) throws Exception;
 
-    boolean checkDuplication(String customerCode, String feastCode, LocalDate date) throws Exception;
+    boolean isDuplication(String customerCode, String feastCode, LocalDate date) throws Exception;
 
     void updateOrder(Order order) throws Exception;
 

@@ -4,10 +4,10 @@ public class Feast {
 
     String feastCode;
     String feastName;
-    int price;
+    double price;
     String ingredients;
 
-    public Feast(String code, String name, int price, String ingredients) {
+    public Feast(String code, String name, double price, String ingredients) {
         this.feastCode = code;
         this.feastName = name;
         this.price = price;
@@ -22,7 +22,7 @@ public class Feast {
         return feastName;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 

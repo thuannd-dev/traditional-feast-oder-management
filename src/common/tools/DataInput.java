@@ -7,8 +7,10 @@ import java.util.Scanner;
 
 public class DataInput {
 
+    private static final Scanner SCANNER = new Scanner(System.in);
+
     public static int getIntegerNumber(String displayMessage) throws Exception {
-        int number = 0;
+        int number;
         System.out.print(displayMessage);
         number = getIntegerNumber();
         return number;
@@ -20,34 +22,31 @@ public class DataInput {
         boolean stop = true;
         do {
             strInput = getString();
-            if (strInput == "") {
+            if ("".equals(strInput)) {
                 return 0;
             }
             stop = !DataValidate.checkStringWithFormat(strInput, "\\d{1,10}");
             if (stop) {
-                System.out.println("Please re-enter:");
-            } else if (number < 0) {
-                stop = true;
-                System.out.println("Please re-enter:");
-            } else {
-                number = Integer.parseInt(strInput);
+                System.out.println("Please enter a valid number:");
+                continue;
             }
+            number = Integer.parseInt(strInput);
+            if (number <= 0) {
+                stop = true;
+                System.out.println("Please enter a positive number:");
+            }
+
         } while (stop);
         return number;
     }
 
     public static String getString() {
-        String strInput;
-        Scanner sc = new Scanner(System.in);
-        strInput = sc.nextLine();
-        return strInput.trim();
+        return SCANNER.nextLine().trim();
     }
 
     public static String getString(String displayMessage) {
-        String strInput;
         System.out.print(displayMessage);
-        strInput = getString();
-        return strInput;
+        return getString();
     }
 
     public static String getString(String displayMessage, String pattern) {
@@ -68,7 +67,7 @@ public class DataInput {
         boolean stop = true;
         do {
             strInput = getString(displayMessage).toUpperCase();
-            if (strInput == "") {
+            if ("".equals(strInput)) {
                 return "";
             }
             stop = !DataValidate.checkStringWithFormat(strInput, pattern);
@@ -87,7 +86,7 @@ public class DataInput {
             strInput = getString(displayMessage);
             stop = !DataValidate.checkStringWithFormat(strInput, "\\d{2}/\\d{2}/\\d{4}");
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please enter a valid date:");
             } else {
                 date = LocalDate.parse(strInput, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }
@@ -113,7 +112,7 @@ public class DataInput {
         boolean stop = true;
         do {
             strInput = getString(displayMessage).trim().toUpperCase();
-            if (strInput == "") {
+            if ("".equals(strInput)) {
                 return "";
             }
             stop = !DataValidate.checkMatchCode(strInput, pattern);
@@ -130,7 +129,7 @@ public class DataInput {
         boolean stop = true;
         do {
             strInput = getString(displayMessage);
-            if (strInput == "") {
+            if ("".equals(strInput)) {
                 return null;
             }
             stop = !DataValidate.checkStringWithFormat(strInput, "\\d{2}/\\d{2}/\\d{4}");

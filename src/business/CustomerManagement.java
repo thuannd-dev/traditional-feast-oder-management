@@ -7,10 +7,11 @@ import core.entities.Customer;
 import core.entities.Feast;
 import core.entities.Order;
 import core.interfaces.ICustomer;
+import core.interfaces.IFeast;
 import core.interfaces.IOrder;
-import data.FeastDAO;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -20,10 +21,10 @@ import view.Menu;
 public class CustomerManagement {
 
     ICustomer customerDAO;
-    FeastDAO feastDAO;
+    IFeast feastDAO;
     IOrder orderDAO;
 
-    public CustomerManagement(ICustomer customerDAO, FeastDAO feastDAO, IOrder orderDAO) {
+    public CustomerManagement(ICustomer customerDAO, IFeast feastDAO, IOrder orderDAO) {
         this.customerDAO = customerDAO;
         this.feastDAO = feastDAO;
         this.orderDAO = orderDAO;
@@ -72,22 +73,24 @@ public class CustomerManagement {
                         System.out.println("3.Exit");
                         System.out.print("Enter your choice: ");
                         int subChoice = Menu.getUserChoice();
-                        if (subChoice == 1) {
-                            printCustomerList(customerDAO.getCustomers());
-                        } else if (subChoice == 2) {
-                            printOrderList(orderDAO.getOrders());
-                        } else if (subChoice == 3) {
-
-                        } else {
-                            System.out.println("Invalid choice");
+                        switch (subChoice) {
+                            case 1 ->
+                                printCustomerList(customerDAO.getCustomers());
+                            case 2 ->
+                                printOrderList(orderDAO.getOrders());
+                            case 3 -> {
+                            }
+                            default ->
+                                System.out.println("Invalid choice");
                         }
                     }
                     case 9 -> {
                         String confirm = DataInput.getString("Do you want to save changes before exiting? (Y/N): ").toUpperCase();
-                        if (confirm.equals("Y")) {
+                        if (confirm.equalsIgnoreCase("Y")) {
                             System.out.println("Data saved to file successfully");
-                            //saveDataToFile();
+                            exportToFile();
                         }
+                        System.out.println("Goodbye!");
                         System.exit(0);
                     }
                     default ->
@@ -110,6 +113,10 @@ public class CustomerManagement {
     }
 
     public void printCustomerList(List<Customer> customerList) throws Exception {
+        if (customerList.isEmpty()) {
+            System.out.println("Does not have any customer information.");
+            return;
+        }
         System.out.println(String.join("", Collections.nCopies(95, "-")));
         System.out.format("%-15s | %-20s | %-20s | %s%n", "Code", "Customer Name", "Phone", "Email");
         System.out.println(String.join("", Collections.nCopies(95, "-")));
@@ -120,6 +127,10 @@ public class CustomerManagement {
     }
 
     public void printFeastList(List<Feast> feastList) throws Exception {
+        if (feastList.isEmpty()) {
+            System.out.println("Does not have any feast information.");
+            return;
+        }
         System.out.println(String.join("", Collections.nCopies(95, "-")));
         System.out.println("List of Set Menus for ordering party:");
         System.out.println(String.join("", Collections.nCopies(95, "-")));
@@ -134,12 +145,27 @@ public class CustomerManagement {
     }
 
     public void printOrderList(List<Order> orderList) throws Exception {
+        if (orderList.isEmpty()) {
+            System.out.println("Does not have any order information.");
+            return;
+        }
+        Collections.sort(orderList, (e1, e2) -> e1.getDate().compareTo(e2.getDate()));
         System.out.println(String.join("", Collections.nCopies(95, "-")));
         System.out.format("%-15s | %-20s | %-20s | %-15s | %-15s | %-15s | %s%n", "ID", "Event Date", "Customer ID", "Set Menu", "Price", "Tables", "Cost");
         System.out.println(String.join("", Collections.nCopies(130, "-")));
         DecimalFormat formatter = new DecimalFormat("#,###");
+        DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
         for (Order e : orderList) {
-            System.out.format("%-15s | %-20s | %-20s | %-15s | %-15s | %-15s | %s%n", e.getOrderID(), e.getDate(), e.getCustomerCode(), e.getFeastCode(), formatter.format(e.getPrice()), e.getNumberTable(), formatter.format(e.getTotalPrice()));
+            System.out.format(
+                    "%-15s | %-20s | %-20s | %-15s | %-15s | %-15s | %s%n",
+                    e.getOrderID(),
+                    e.getDate().format(dateFormatter),
+                    e.getCustomerCode(),
+                    e.getFeastCode(),
+                    formatter.format(e.getPrice()),
+                    e.getNumberTable(),
+                    formatter.format(e.getTotalPrice())
+            );
         }
         System.out.println(String.join("", Collections.nCopies(130, "-")));
     }
@@ -169,13 +195,13 @@ public class CustomerManagement {
             String customerName = DataInput.getStringUpdate("Enter customer name:", Constants.NAME_PATTERN);
             String phoneNumber = DataInput.getStringUpdate("Enter phone number:", Constants.PHONE_PATTERN);
             String email = DataInput.getStringUpdate("Enter email:", Constants.EMAIL_PATTERN);
-            if (customerName == "") {
+            if ("".equals(customerName)) {
                 customerName = customer.getCustomerName();
             }
-            if (phoneNumber == "") {
+            if ("".equals(phoneNumber)) {
                 phoneNumber = customer.getPhoneNumber();
             }
-            if (email == "") {
+            if ("".equals(email)) {
                 email = customer.getEmail();
             }
             customerName = DataUtils.toTitleCase(customerName);
@@ -199,7 +225,7 @@ public class CustomerManagement {
                 }
             });
             if (result.isEmpty()) {
-                System.out.println("No customer found");
+                System.out.println("No one matches the search criteria!");
             } else {
                 printCustomerList(result);
             }
@@ -221,7 +247,10 @@ public class CustomerManagement {
         }
         int numberTable = DataInput.getIntegerNumber("Enter number of table:");
         LocalDate date = DataInput.getDate("Enter event date:");
-        if (orderDAO.checkDuplication(customerCode, feastCode, date)) {
+        if (date.isBefore(LocalDate.now())) {
+            throw new Exception("Event date must be in the future");
+        }
+        if (orderDAO.isDuplication(customerCode, feastCode, date)) {
             throw new Exception("Order already exists");
         }
         Random random = new Random();
@@ -239,20 +268,23 @@ public class CustomerManagement {
             String orderId = DataInput.getString("Enter order id:").toUpperCase();
             Order order = orderDAO.getOrderById(orderId);
             if (order == null) {
-                throw new Exception("Order not found");
+                throw new Exception("This Order does not exist .");
             }
             String feastCode = DataInput.getStringUpdate("Enter feast code:", Constants.FEAST_CODE_LIST).toUpperCase();
             int numberTable = DataInput.getIntegerNumber("Enter number of table:");
             LocalDate date = DataInput.getDateUpdate("Enter event date:");
-            if (feastCode == "") {
+            if (date == null) {
+                date = order.getDate();
+            } else if (date.isBefore(LocalDate.now())) {
+                throw new Exception("Event date must be in the future");
+            }
+            if ("".equals(feastCode)) {
                 feastCode = order.getFeastCode();
             }
             if (numberTable == 0) {
                 numberTable = order.getNumberTable();
             }
-            if (date == null) {
-                date = order.getDate();
-            }
+
             order.setFeastCode(feastCode);
             order.setNumberTable(numberTable);
             order.setDate(date);

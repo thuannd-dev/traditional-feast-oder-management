@@ -7,12 +7,12 @@ public class Order {
     String orderID;
     String customerCode;
     String feastCode;
-    int price;
+    double price;
     int numberTable;
     LocalDate date;
-    int totalPrice;
+    double totalPrice;
 
-    public Order(String orderID, String customerCode, String feastCode, int price, int numberTable, LocalDate date) {
+    public Order(String orderID, String customerCode, String feastCode, double price, int numberTable, LocalDate date) {
         this.orderID = orderID;
         this.customerCode = customerCode;
         this.feastCode = feastCode;
@@ -26,7 +26,7 @@ public class Order {
         return orderID;
     }
 
-    public int getTotalPrice() {
+    public double getTotalPrice() {
         return totalPrice;
     }
 
@@ -46,7 +46,7 @@ public class Order {
         return date;
     }
 
-    public int getPrice() {
+    public double getPrice() {
         return price;
     }
 
@@ -62,7 +62,7 @@ public class Order {
         this.feastCode = feastCode;
     }
 
-    public void setPrice(int price) {
+    public void setPrice(double price) {
         this.price = price;
     }
 
@@ -74,7 +74,7 @@ public class Order {
         this.date = date;
     }
 
-    public void setTotalPrice(int totalPrice) {
+    public void setTotalPrice(double totalPrice) {
         this.totalPrice = totalPrice;
     }
 
