@@ -13,10 +13,12 @@ public class Program {
 
     public static void main(String[] args) {
         try {
-            ICustomer customerService = new CustomerDAO(Constants.CUSTOMER_FILE);
-            IFeast feastService = new FeastDAO(Constants.FEAST_MENU_FILE);
-            IOrder orderService = new OrderDAO(Constants.ORDER_FILE);
-            Menu.manageStudent(customerService, feastService, orderService);
+            while (true) {
+                ICustomer customerService = new CustomerDAO(Constants.CUSTOMER_FILE);
+                IFeast feastService = new FeastDAO(Constants.FEAST_MENU_FILE);
+                IOrder orderService = new OrderDAO(Constants.ORDER_FILE);
+                Menu.manageStudent(customerService, feastService, orderService);
+            }
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }

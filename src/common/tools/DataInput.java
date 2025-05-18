@@ -19,7 +19,7 @@ public class DataInput {
     public static int getIntegerNumber() throws Exception {
         int number = 0;
         String strInput;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString();
             if ("".equals(strInput)) {
@@ -51,12 +51,12 @@ public class DataInput {
 
     public static String getString(String displayMessage, String pattern) {
         String strInput;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage);
             stop = !DataValidate.checkStringWithFormat(strInput, pattern);
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please re-enter!");
             }
         } while (stop);
         return strInput;
@@ -64,7 +64,7 @@ public class DataInput {
 
     public static String getStringUpdate(String displayMessage, String pattern) {
         String strInput;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage).toUpperCase();
             if ("".equals(strInput)) {
@@ -72,7 +72,7 @@ public class DataInput {
             }
             stop = !DataValidate.checkStringWithFormat(strInput, pattern);
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please re-enter!");
             }
         } while (stop);
         return strInput;
@@ -81,7 +81,7 @@ public class DataInput {
     public static LocalDate getDate(String displayMessage) throws Exception {
         String strInput;
         LocalDate date = null;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage);
             stop = !DataValidate.checkStringWithFormat(strInput, "\\d{2}/\\d{2}/\\d{4}");
@@ -96,12 +96,12 @@ public class DataInput {
 
     public static String getString(String displayMessage, List<String> pattern) {
         String strInput;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage).trim().toUpperCase();
             stop = !DataValidate.checkMatchCode(strInput, pattern);
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please re-enter!");
             }
         } while (stop);
         return strInput;
@@ -109,7 +109,7 @@ public class DataInput {
 
     public static String getStringUpdate(String displayMessage, List<String> pattern) {
         String strInput;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage).trim().toUpperCase();
             if ("".equals(strInput)) {
@@ -117,7 +117,7 @@ public class DataInput {
             }
             stop = !DataValidate.checkMatchCode(strInput, pattern);
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please re-enter!");
             }
         } while (stop);
         return strInput;
@@ -126,7 +126,7 @@ public class DataInput {
     public static LocalDate getDateUpdate(String displayMessage) throws Exception {
         String strInput;
         LocalDate date = null;
-        boolean stop = true;
+        boolean stop;
         do {
             strInput = getString(displayMessage);
             if ("".equals(strInput)) {
@@ -134,7 +134,7 @@ public class DataInput {
             }
             stop = !DataValidate.checkStringWithFormat(strInput, "\\d{2}/\\d{2}/\\d{4}");
             if (stop) {
-                System.out.println("Please re-enter:");
+                System.out.println("Please re-enter!");
             } else {
                 date = LocalDate.parse(strInput, DateTimeFormatter.ofPattern("dd/MM/yyyy"));
             }

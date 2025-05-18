@@ -98,6 +98,12 @@ public class CustomerManagement {
                 }
             } while (true);
         } catch (Exception e) {
+            //luu du lieu vao file truoc khi thoat va hien thi loi
+            try {
+                exportToFile();
+            } catch (Exception ex) {
+                System.out.println("Error saving data: " + ex.getMessage());
+            }
             System.out.println(e.getMessage());
         }
     }
@@ -189,7 +195,7 @@ public class CustomerManagement {
             String customerCode = DataInput.getString("Enter customer code:", Constants.CUSTOMER_ID_PATTERN).toUpperCase();
             Customer customer = customerDAO.getCustomerById(customerCode);
             if (customer == null) {
-                System.out.println("Customer not found");
+                System.out.println("This customer does not exist.");
                 return;
             }
             String customerName = DataInput.getStringUpdate("Enter customer name:", Constants.NAME_PATTERN);
@@ -234,6 +240,48 @@ public class CustomerManagement {
         }
     }
 
+    public void printOrder(Order order) throws Exception {
+        // ----------------------------------------------------------------
+        // Customer order information [Order ID: 20241224092351]
+        // ----------------------------------------------------------------
+        // Customer code : K0310
+        // Customer name : Yen, Hoang Minh
+        // Phone number : 0351232321
+        // Email : yenhm11@gmail.com
+        // ----------------------------------------------------------------
+        // Code of Set Menu: PW002
+        // Set menu name : Company year end party
+        // Event date : 14/02/2025
+        // Number of tables: 8
+        // Price : 2,085,000 Vnd
+        // Ingredients:
+        // + Khai vị: Súp gà ngô; Nộm bò rau mầm
+        // + Món chính: Tôm hấp bia; Bò sốt tiêu đen + bánh mì; …
+        // + Tráng miệng: Rau câu dừa
+        // ----------------------------------------------------------------
+        // Total cost : 16,680,000 Vnd
+        // ----------------------------------------------------------------
+        Customer customer = customerDAO.getCustomerById(order.getCustomerCode());
+        Feast feast = feastDAO.getFeastById(order.getFeastCode());
+        System.out.println("Customer order information [Order ID: " + order.getOrderID() + "]");
+        System.out.println(String.join("", Collections.nCopies(95, "-")));
+        System.out.println("Customer code : " + order.getCustomerCode());
+        System.out.println("Customer name : " + customer.getCustomerName());
+        System.out.println("Phone number  : " + customer.getPhoneNumber());
+        System.out.println("Email         : " + customer.getEmail());
+        System.out.println(String.join("", Collections.nCopies(95, "-")));
+        System.out.println("Code of Set Menu: " + order.getFeastCode());
+        System.out.println("Set menu name   : " + feast.getFeastName());
+        System.out.println("Event date      : " + order.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy")));
+        System.out.println("Number of tables: " + order.getNumberTable());
+        DecimalFormat formatter = new DecimalFormat("#,###");
+        System.out.println("Price           : " + formatter.format(order.getPrice()) + " VND");
+        System.out.println("Ingredients     : \n" + feast.getIngredients().replaceAll("#", "\n").replaceAll("\"", ""));
+        System.out.println(String.join("", Collections.nCopies(95, "-")));
+        System.out.println("Total cost      : " + formatter.format(order.getTotalPrice()) + " VND");
+        System.out.println(String.join("", Collections.nCopies(95, "-")));
+    }
+
     public void placeOrder() throws Exception {
         String customerCode = DataInput.getString("Enter customer code:", Constants.CUSTOMER_ID_PATTERN).toUpperCase();
         Customer customer = customerDAO.getCustomerById(customerCode);
@@ -260,7 +308,7 @@ public class CustomerManagement {
         }
         Order order = new Order(orderId, customerCode, feastCode, feast.getPrice(), numberTable, date);
         orderDAO.addOrder(order);
-        System.out.println("Order placed successfully");
+        printOrder(order);
     }
 
     public void updateOrder() throws Exception {
