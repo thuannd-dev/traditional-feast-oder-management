@@ -127,7 +127,10 @@ public class CustomerManagement {
         System.out.format("%-15s | %-20s | %-20s | %s%n", "Code", "Customer Name", "Phone", "Email");
         System.out.println(String.join("", Collections.nCopies(95, "-")));
         for (Customer e : customerList) {
-            System.out.format("%-15s | %-20s | %-20s | %s%n", e.getCustomerCode(), e.getCustomerName(), e.getPhoneNumber(), e.getEmail());
+            System.out.format(
+                    "%-15s | %-20s | %-20s | %s%n",
+                    e.getCustomerCode(), e.getCustomerName(), e.getPhoneNumber(), e.getEmail()
+            );
         }
         System.out.println(String.join("", Collections.nCopies(95, "-")));
     }
@@ -157,7 +160,10 @@ public class CustomerManagement {
         }
         Collections.sort(orderList, (e1, e2) -> e1.getDate().compareTo(e2.getDate()));
         System.out.println(String.join("", Collections.nCopies(95, "-")));
-        System.out.format("%-15s | %-20s | %-20s | %-15s | %-15s | %-15s | %s%n", "ID", "Event Date", "Customer ID", "Set Menu", "Price", "Tables", "Cost");
+        System.out.format(
+                "%-15s | %-20s | %-20s | %-15s | %-15s | %-15s | %s%n",
+                "ID", "Event Date", "Customer ID", "Set Menu", "Price", "Tables", "Cost"
+        );
         System.out.println(String.join("", Collections.nCopies(130, "-")));
         DecimalFormat formatter = new DecimalFormat("#,###");
         DateTimeFormatter dateFormatter = DateTimeFormatter.ofPattern("dd/MM/yyyy");
@@ -241,26 +247,6 @@ public class CustomerManagement {
     }
 
     public void printOrder(Order order) throws Exception {
-        // ----------------------------------------------------------------
-        // Customer order information [Order ID: 20241224092351]
-        // ----------------------------------------------------------------
-        // Customer code : K0310
-        // Customer name : Yen, Hoang Minh
-        // Phone number : 0351232321
-        // Email : yenhm11@gmail.com
-        // ----------------------------------------------------------------
-        // Code of Set Menu: PW002
-        // Set menu name : Company year end party
-        // Event date : 14/02/2025
-        // Number of tables: 8
-        // Price : 2,085,000 Vnd
-        // Ingredients:
-        // + Khai vị: Súp gà ngô; Nộm bò rau mầm
-        // + Món chính: Tôm hấp bia; Bò sốt tiêu đen + bánh mì; …
-        // + Tráng miệng: Rau câu dừa
-        // ----------------------------------------------------------------
-        // Total cost : 16,680,000 Vnd
-        // ----------------------------------------------------------------
         Customer customer = customerDAO.getCustomerById(order.getCustomerCode());
         Feast feast = feastDAO.getFeastById(order.getFeastCode());
         System.out.println("Customer order information [Order ID: " + order.getOrderID() + "]");

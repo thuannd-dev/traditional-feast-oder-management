@@ -46,7 +46,10 @@ public class FeastDAO implements IFeast {
 
     @Override
     public List<Feast> getFeasts() {
-        Collections.sort(FEAST_LIST, (e1, e2) -> Double.compare(e1.getPrice(), e2.getPrice()));
+        Collections.sort(
+                FEAST_LIST,
+                (e1, e2) -> Double.compare(e1.getPrice(), e2.getPrice())
+        );
         return FEAST_LIST;
     }
 
@@ -55,7 +58,13 @@ public class FeastDAO implements IFeast {
         if (FEAST_LIST.isEmpty()) {
             getFeasts();
         }
-        Feast feast = FEAST_LIST.stream().filter(e -> e.getFeastCode().equals(id)).findFirst().orElse(null);
+        Feast feast = FEAST_LIST
+                .stream()
+                .filter(
+                        e -> e.getFeastCode().equals(id)
+                )
+                .findFirst()
+                .orElse(null);
         return feast;
     }
 
